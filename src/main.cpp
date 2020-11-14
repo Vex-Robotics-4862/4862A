@@ -88,6 +88,22 @@ while (true) {
 
 }
 
+using namespace okapi;
+std::shared_ptr<ChassisController> myChassis =
+  ChassisControllerBuilder()
+    .withMotors({LB_MTR, LF_MTR}, {RB_MTR, RF_MTR}) //Something may be wrong with this - try negative values???
+    // Green gearset, 4 in wheel diam, 11.5 in wheel track
+    .withDimensions(AbstractMotor::gearset::red, {{4_in, 11.5_in}, imev5RedTPR})
+    .build();
+std::shared_ptr<AsyncMotionProfileController> profileController =
+  AsyncMotionProfileControllerBuilder()
+    .withLimits({
+      1.0, // Maximum linear velocity of the Chassis in m/s
+      2.0, // Maximum linear acceleration of the Chassis in m/s/s
+      10.0 // Maximum linear jerk of the Chassis in m/s/s/s
+    })
+    .withOutput(myChassis)
+    .buildMotionProfileController();
 
 void autonomous() {
 	pros::Motor lb_mtr (LB_MTR, pros::E_MOTOR_GEARSET_06, true);
@@ -96,8 +112,14 @@ void autonomous() {
 	pros::Motor rf_mtr (RF_MTR, pros::E_MOTOR_GEARSET_06);
 	okapi::MotorGroup left_mtr({LB_MTR, LF_MTR});
 	okapi::MotorGroup right_mtr({RB_MTR, RF_MTR});
-	left_mtr.moveAbsolute(100,50); //TODO
-	right_mtr.moveAbsolute(100, 50);
+	//left_mtr.moveAbsolute(500,50); //TODO
+	//right_mtr.moveAbsolute(500, 50);
+
+	profileController->generatePath(
+    {{0_ft, 0_ft, 0_deg}, {3_ft, 0_ft, 0_deg}}, "A");
+  profileController->setTarget("A");
+  profileController->waitUntilSettled();
+
 
 }
 
