@@ -10,6 +10,8 @@
 #define L_INTAKE 8
 #define R_INTAKE 9
 
+#define DEADZONE 10
+
 enum autoType { competition1, competition2, skills1, skills2, test_one_tile};
 int side = -1; // -1 is red; 1 is blue
 std::string sides[] = {"red", "???", "blue"};
@@ -94,7 +96,8 @@ void autonomous() {
 	pros::Motor rf_mtr (RF_MTR, pros::E_MOTOR_GEARSET_06);
 	okapi::MotorGroup left_mtr({LB_MTR, LF_MTR});
 	okapi::MotorGroup right_mtr({RB_MTR, RF_MTR});
-
+	left_mtr.moveAbsolute(100,50); //TODO
+	right_mtr.moveAbsolute(100, 50);
 
 }
 
@@ -107,7 +110,15 @@ void opcontrol() {
 	pros::Motor allmotors[] = {lb_mtr, lf_mtr, rb_mtr, rf_mtr};
 	okapi::MotorGroup left_mtr({LB_MTR, LF_MTR});
 	okapi::MotorGroup right_mtr({RB_MTR, RF_MTR});
+	pros::Motor l_intk (L_INTAKE);
+	pros::Motor r_intk (R_INTAKE);
+	pros::Motor lift_1 (LIFT_1);
+//	pros::Motor lift_2 (LIFT_2);
+//  TODO: Add lift motors and set brake modes
+
 	int left, right, forw, rot, i;
+	int intake = 0;
+	int lift = 0;
 	int maxTemp, motorMaxTemp;
 	enum driveType { tank, right_only };
 	driveType drive = right_only;
@@ -125,10 +136,17 @@ void opcontrol() {
 				// dir = atan2((double)control.get_analog(ANALOG_RIGHT_Y), (double)control.get_analog(ANALOG_RIGHT_X));
 				// pros::lcd::set_text(0, std::to_string(dir));
 
-				forw = control.get_analog(ANALOG_RIGHT_Y) * .5;
-				rot = control.get_analog(ANALOG_RIGHT_X) * .3;
+				forw = control.get_analog(ANALOG_RIGHT_Y) * .75; //Temporarily slowed down!
+				rot = control.get_analog(ANALOG_RIGHT_X) * .5;
 				left = (forw + rot);
 				right = (forw - rot);
+
+				if (abs(left) < DEADZONE) {
+					left = 0;
+				} if (abs(right) < DEADZONE) {
+					right = 0;
+				}
+
 				if (true) {
 					lb_mtr = left;
 					lf_mtr = left;
@@ -138,18 +156,33 @@ void opcontrol() {
 					left_mtr.moveVelocity(left);
 					right_mtr.moveVelocity(right);
 				}
-
-
-
 				break;
 		}
-		if (control.get_digital(DIGITAL_B) && lb_mtr.get_brake_mode() == pros::E_MOTOR_BRAKE_COAST) {
-			lb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD); lf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-			rb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD); rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
-		} else if (lb_mtr.get_brake_mode() != pros::E_MOTOR_BRAKE_COAST) {
-			lb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); lf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
-			rb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+		// if (control.get_digital(DIGITAL_B) && lb_mtr.get_brake_mode() == pros::E_MOTOR_BRAKE_COAST) {
+		// 	lb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD); lf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+		// 	rb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD); rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+		// } else if (lb_mtr.get_brake_mode() != pros::E_MOTOR_BRAKE_COAST) {
+		// 	lb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); lf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+		// 	rb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
+		// }
+
+		if (control.get_digital(DIGITAL_R1)) {
+			lift = control.get_analog(ANALOG_LEFT_Y);
+		} else {
+			intake = control.get_analog(ANALOG_LEFT_Y);
 		}
+
+		if (control.get_digital(DIGITAL_LEFT)) {
+			intake = 127;
+		} else if (control.get_digital(DIGITAL_RIGHT) && control.get_digital(DIGITAL_UP)) {
+			intake = -127;
+		}
+
+		l_intk = intake;
+		r_intk = -intake;
+
+		lift_1 = lift; //TODO: Note that both motors aren't connected exactly - be careful not to overheat motors
+		//lift_2
 
 		pros::lcd::set_text(1, std::to_string(lb_mtr.get_voltage()/100));
 		pros::lcd::set_text(2, std::to_string(rb_mtr.get_voltage()/100));
