@@ -169,17 +169,20 @@ void opcontrol() {
 		if (control.get_digital(DIGITAL_R1)) {
 			lift = control.get_analog(ANALOG_LEFT_Y);
 		} else {
-			intake = control.get_analog(ANALOG_LEFT_Y);
+			intake = control.get_analog(ANALOG_LEFT_Y); //Positive is inntake, negative is outtake
+			if (intake < 0) {
+				intake = intake / 3; //Reduce intensity of outtake
+			}
 		}
 
-		if (control.get_digital(DIGITAL_LEFT)) {
-			intake = 127;
-		} else if (control.get_digital(DIGITAL_RIGHT) && control.get_digital(DIGITAL_UP)) {
-			intake = -127;
+		if (control.get_digital(DIGITAL_RIGHT) && control.get_digital(DIGITAL_UP)) {
+			intake = -127; //Emergency outtake
+		} else if (control.get_digital(DIGITAL_LEFT) || control.get_digital(DIGITAL_DOWN)) {
+			intake = 127; //Max intake
 		}
 
-		l_intk = -intake;
-		r_intk = intake;
+		l_intk = intake;
+		r_intk = -intake;
 
 		lift_1 = lift; //TODO: Note that both motors aren't connected exactly - be careful not to overheat motors
 		//lift_2
