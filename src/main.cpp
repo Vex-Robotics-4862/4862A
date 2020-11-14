@@ -5,6 +5,10 @@
 #define LF_MTR 5
 #define RB_MTR 2
 #define RF_MTR 3
+#define LIFT_1 6
+#define LIFT_2 7 //yet to be connected
+#define L_INTAKE 8
+#define R_INTAKE 9
 
 enum autoType { competition1, competition2, skills1, skills2, test_one_tile};
 int side = -1; // -1 is red; 1 is blue
