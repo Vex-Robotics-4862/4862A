@@ -10,7 +10,7 @@
 #define L_INTAKE 8
 #define R_INTAKE 9
 
-#define DEADZONE 10
+#define DEADZONE 8
 
 enum autoType { competition1, competition2, skills1, skills2, test_one_tile};
 int side = -1; // -1 is red; 1 is blue
@@ -178,8 +178,8 @@ void opcontrol() {
 			intake = -127;
 		}
 
-		l_intk = intake;
-		r_intk = -intake;
+		l_intk = -intake;
+		r_intk = intake;
 
 		lift_1 = lift; //TODO: Note that both motors aren't connected exactly - be careful not to overheat motors
 		//lift_2
