@@ -116,7 +116,7 @@ void autonomous() {
 	//right_mtr.moveAbsolute(500, 50);
 
 	profileController->generatePath(
-    {{0_ft, 0_ft, 0_deg}, {3_ft, 0_ft, 0_deg}}, "A");
+    {{0_ft, 0_ft, 0_deg}, {2_ft, 0_ft, 0_deg}}, "A");
   profileController->setTarget("A");
   profileController->waitUntilSettled();
 
