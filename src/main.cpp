@@ -193,7 +193,7 @@ void opcontrol() {
 		} else {
 			intake = control.get_analog(ANALOG_LEFT_Y); //Positive is inntake, negative is outtake
 			if (intake < 0) {
-				intake = intake / 3; //Reduce intensity of outtake
+				intake = intake * 1; //Change to .5 to reduce intensity of outtake
 			}
 		}
 
