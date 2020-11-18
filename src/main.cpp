@@ -158,8 +158,8 @@ void opcontrol() {
 				// dir = atan2((double)control.get_analog(ANALOG_RIGHT_Y), (double)control.get_analog(ANALOG_RIGHT_X));
 				// pros::lcd::set_text(0, std::to_string(dir));
 
-				forw = control.get_analog(ANALOG_RIGHT_Y) * .75; //Temporarily slowed down!
-				rot = control.get_analog(ANALOG_RIGHT_X) * .5;
+				forw = control.get_analog(ANALOG_RIGHT_Y);
+				rot = control.get_analog(ANALOG_RIGHT_X) * .8;
 				left = (forw + rot);
 				right = (forw - rot);
 
@@ -207,7 +207,7 @@ void opcontrol() {
 		r_intk = -intake;
 
 		lift_1 = lift; //TODO: Note that both motors aren't connected exactly - be careful not to overheat motors
-		//lift_2
+		//lift_2 = lift;
 
 		pros::lcd::set_text(1, std::to_string(lb_mtr.get_voltage()/100));
 		pros::lcd::set_text(2, std::to_string(rb_mtr.get_voltage()/100));
