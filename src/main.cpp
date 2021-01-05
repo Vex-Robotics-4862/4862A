@@ -135,7 +135,7 @@ void opcontrol() {
 	pros::Motor l_intk (L_INTAKE);
 	pros::Motor r_intk (R_INTAKE);
 	pros::Motor lift_1 (LIFT_1);
-//	pros::Motor lift_2 (LIFT_2);
+	pros::Motor lift_2 (LIFT_2);
 //  TODO: Add lift motors and set brake modes
 
 	int left, right, forw, rot, i;
@@ -188,14 +188,14 @@ void opcontrol() {
 		// 	rb_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST); rf_mtr.set_brake_mode(pros::E_MOTOR_BRAKE_COAST);
 		// }
 
-		if (control.get_digital(DIGITAL_R1)) {
+		if (true || control.get_digital(DIGITAL_R1)) {
 			lift = control.get_analog(ANALOG_LEFT_Y);
-		} else {
+		} /*else {
 			intake = control.get_analog(ANALOG_LEFT_Y); //Positive is inntake, negative is outtake
 			if (intake < 0) {
 				intake = intake * 1; //Change to .5 to reduce intensity of outtake
 			}
-		}
+		}*/
 
 		if (control.get_digital(DIGITAL_RIGHT) && control.get_digital(DIGITAL_UP)) {
 			intake = -127; //Emergency outtake
@@ -207,7 +207,7 @@ void opcontrol() {
 		r_intk = -intake;
 
 		lift_1 = lift; //TODO: Note that both motors aren't connected exactly - be careful not to overheat motors
-		//lift_2 = lift;
+		lift_2 = lift;
 
 		pros::lcd::set_text(1, std::to_string(lb_mtr.get_voltage()/100));
 		pros::lcd::set_text(2, std::to_string(rb_mtr.get_voltage()/100));
