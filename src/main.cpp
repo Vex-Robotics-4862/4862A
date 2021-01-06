@@ -11,7 +11,7 @@
 #define R_INTAKE 9
 
 #define DEADZONE 8
-
+//int side = 0;
 enum autoType { competition1, competition2, skills1, skills2, test_one_tile};
 int side = -1; // -1 is red; 1 is blue
 std::string sides[] = {"red", "???", "blue"};
@@ -197,10 +197,12 @@ void opcontrol() {
 			}
 		}*/
 
-		if (control.get_digital(DIGITAL_RIGHT) && control.get_digital(DIGITAL_UP)) {
+		if (control.get_digital(DIGITAL_R2)) {
 			intake = -127; //Emergency outtake
-		} else if (control.get_digital(DIGITAL_LEFT) || control.get_digital(DIGITAL_DOWN)) {
+		} else if (control.get_digital(DIGITAL_R1)) {
 			intake = 127; //Max intake
+		} else {
+			intake = 0;
 		}
 
 		l_intk = intake;
